@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Répertoire Libertaire - CNT-AIT</title>
+  <meta name="description" content="Répertoire des sections, groupes et locaux libertaires (CNT-AIT, FA, UCL, CNT-F, CNT-SO, OA, OCL, Collectifs). Carte interactive, recherche et filtres.">
+
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet Map & MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- App Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation & Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <img src="cnt_ait_logo.png" alt="CNT-AIT Logo" class="brand-logo-img">
+        <div class="brand-info">
+          <h1>Répertoire <span class="highlight">Libertaire</span></h1>
+          <p>Organisations, sections, groupes &amp; locaux libertaires (Document CNT-AIT)</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="toggleFavoritesBtn" class="btn" title="Afficher mes favoris">
+          <i class="fa-solid fa-heart" style="color: var(--accent-red);"></i>
+          <span>Favoris (<span id="favCount">0</span>)</span>
+        </button>
+
+        <button id="exportCsvBtn" class="btn" title="Exporter les données au format CSV">
+          <i class="fa-solid fa-file-csv"></i>
+          <span>Exporter CSV</span>
+        </button>
+
+        <a href="document_sections_groupes_libertaires_CNT_AIT.pdf" target="_blank" class="btn btn-primary" title="Télécharger le document PDF original">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>PDF Original</span>
+        </a>
+
+        <button id="themeToggleBtn" class="btn btn-icon" title="Basculer le mode sombre/clair">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- KPI Stats Banner -->
+    <section class="stats-banner">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+          <div class="stat-val" id="statTotalCount">111</div>
+          <div class="stat-lbl">Groupes &amp; Structures</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa-solid fa-sitemap"></i>
+        </div>
+        <div>
+          <div class="stat-val" id="statOrgsCount">9</div>
+          <div class="stat-lbl">Organisations</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa-solid fa-city"></i>
+        </div>
+        <div>
+          <div class="stat-val" id="statCitiesCount">74</div>
+          <div class="stat-lbl">Villes &amp; Zones</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div>
+          <div class="stat-val" id="statFilteredCount">111</div>
+          <div class="stat-lbl">Résultats Actuels</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters & Search Toolbar -->
+    <section class="filter-section">
+      <div class="search-row">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" class="search-input" placeholder="Rechercher par nom, ville, organisation, courriel, adresse..." autocomplete="off">
+        </div>
+
+        <div class="view-switchers">
+          <button class="view-btn active" data-view="grid" title="Vue en grilles d'unités">
+            <i class="fa-solid fa-border-all"></i> Grille
+          </button>
+          <button class="view-btn" data-view="table" title="Vue sous forme de tableau">
+            <i class="fa-solid fa-table-list"></i> Tableau
+          </button>
+          <button class="view-btn" data-view="map" title="Vue sur carte géographique interactive">
+            <i class="fa-solid fa-map-location-dot"></i> Carte
+          </button>
+        </div>
+      </div>
+
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="orgFilter">Organisation</label>
+          <select id="orgFilter" class="select-input">
+            <option value="ALL">Toutes les organisations</option>
+            <option value="CNT-AIT">CNT-AIT</option>
+            <option value="Fédération anarchiste (FA)">Fédération anarchiste (FA)</option>
+            <option value="UCL">UCL (Union Communiste Libertaire)</option>
+            <option value="CNT-F / Vignoles">CNT-F / Vignoles</option>
+            <option value="CNT-SO">CNT-SO (Solidarité Ouvrière)</option>
+            <option value="Organisation Anarchiste (OA)">Organisation Anarchiste (OA)</option>
+            <option value="OCL">OCL</option>
+            <option value="Indépendant / local">Indépendant / local (France)</option>
+            <option value="Indépendant / local (Belgique)">Indépendant / local (Belgique)</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="typeFilter">Type de Structure</label>
+          <select id="typeFilter" class="select-input">
+            <option value="ALL">Tous les types</option>
+            <option value="Groupe">Groupe</option>
+            <option value="Liaison">Liaison</option>
+            <option value="Section / groupe">Section / Groupe</option>
+            <option value="Union locale">Union Locale</option>
+            <option value="Union régionale">Union Régionale</option>
+            <option value="Permanence">Permanence</option>
+            <option value="Local">Local / Lieu</option>
+            <option value="Collectif">Collectif</option>
+            <option value="Librairie">Librairie / Bibliothèque</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="countryFilter">Pays / Zone</label>
+          <select id="countryFilter" class="select-input">
+            <option value="ALL">Toutes les zones</option>
+            <option value="FR">France</option>
+            <option value="BE">Belgique</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="sortBy">Trier par</label>
+          <select id="sortBy" class="select-input">
+            <option value="nom-asc">Nom (A-Z)</option>
+            <option value="nom-desc">Nom (Z-A)</option>
+            <option value="org-asc">Organisation (A-Z)</option>
+            <option value="ville-asc">Ville (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+            <!-- Quick Filter Pills with official logos -->
+      <div class="quick-pills">
+        <span class="pill-label">Filtres rapides:</span>
+        <button class="pill-btn" data-pill="cnt-ait"><img src="cnt_ait_logo.png" class="org-logo-img" alt="CNT-AIT"> CNT-AIT</button>
+        <button class="pill-btn" data-pill="fa"><img src="logo_fa.svg" class="org-logo-img" alt="FA"> Fédération Anarchiste</button>
+        <button class="pill-btn" data-pill="ucl"><img src="logo_ucl.svg" class="org-logo-img" alt="UCL"> UCL</button>
+        <button class="pill-btn" data-pill="cnt-f"><img src="logo_cnt.svg" class="org-logo-img" alt="CNT-F"> CNT-F Vignoles</button>
+        <button class="pill-btn" data-pill="cnt-so"><img src="logo_cnt_so.jpg" class="org-logo-img" alt="CNT-SO"> CNT-SO</button>
+        <button class="pill-btn" data-pill="belgique"><i class="fa-solid fa-globe"></i> Belgique</button>
+        <button class="pill-btn" data-pill="locaux"><i class="fa-solid fa-building-user"></i> Locaux &amp; Librairies</button>
+        <button class="pill-btn" id="resetFiltersBtn"><i class="fa-solid fa-rotate-left"></i> Réinitialiser</button>
+      </div>
+    </section>
+
+    <!-- Results Count Bar -->
+    <div class="results-header">
+      <div class="results-count">
+        Affichage de <strong id="visibleCount">111</strong> éléments sur <strong>111</strong>
+      </div>
+    </div>
+
+    <!-- Main Dynamic Views -->
+    <div id="gridView" class="cards-grid fade-in"></div>
+
+    <div id="tableView" class="table-container hidden fade-in">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Organisation</th>
+            <th>Groupe / Lieu</th>
+            <th>Ville / Zone</th>
+            <th>Contact</th>
+            <th>Adresse</th>
+            <th>Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Map Container -->
+    <div id="mapView" class="map-view-container hidden fade-in">
+      <div id="map"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state hidden">
+      <i class="fa-solid fa-magnifying-glass-minus"></i>
+      <h3>Aucun résultat trouvé</h3>
+      <p>Essayez de modifier votre terme de recherche ou d'ajuster les filtres choisis.</p>
+      <button class="btn btn-primary" onclick="resetAllFilters()">Réinitialiser la recherche</button>
+    </div>
+
+  </main>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span id="modalOrgBadge" class="badge">Organisation</span>
+          <h3 id="modalTitle">Nom de la structure</h3>
+        </div>
+        <button class="close-modal" id="closeModalBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-row">
+          <label>Type de structure</label>
+          <span id="modalType">—</span>
+        </div>
+
+        <div class="detail-row">
+          <label>Ville / Zone géographique</label>
+          <span id="modalVille">—</span>
+        </div>
+
+        <div class="detail-row">
+          <label>Adresse</label>
+          <span id="modalAdresse">—</span>
+        </div>
+
+        <div class="detail-row">
+          <label>Contact &amp; Courriel</label>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <a id="modalContactLink" href="#" target="_blank">—</a>
+            <button id="copyModalEmailBtn" class="btn btn-icon" title="Copier le courriel"><i class="fa-solid fa-copy"></i></button>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <label>Page source PDF</label>
+          <span id="modalPage">Page —</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem;">
+        <button id="modalFavBtn" class="btn"><i class="fa-regular fa-heart"></i> Favoris</button>
+        <button class="btn btn-primary" onclick="closeModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Répertoire réalisé à partir du document diffusé par la <strong>CNT-AIT</strong>.</p>
+  </footer>
+
+  <!-- Leaflet Map JS & MarkerCluster JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- Embedded Single-File Application Logic -->
+  <script>
+const LIBERTAIRE_DATA = [
+  {
+    "id": 1,
+    "page": 1,
+    "organisation": "Organisation Anarchiste (OA)",
+    "nom": "Groupe Puig Antich",
+    "ville": "Perpignan",
+    "contact": "contact@groupe-puig-antich.info",
+    "adresse": "Librairie Infos, 2 rue Théodore Guiter",
+    "type": "Groupe",
+    "lat": 42.6986,
+    "lng": 2.8956
+  },
+  {
+    "id": 2,
+    "page": 1,
+    "organisation": "Organisation Anarchiste (OA)",
+    "nom": "Groupe Albert Camus",
+    "ville": "Toulouse",
+    "contact": "groupe.albert.camus@gmail.com",
+    "adresse": "36 rue de Cugnaux, 31300 Toulouse",
+    "type": "Groupe",
+    "lat": 43.6047,
+    "lng": 1.4442
+  },
+  {
+    "id": 3,
+    "page": 1,
+    "organisation": "Organisation Anarchiste (OA)",
+    "nom": "Groupe Anarchiste de Carcassonne",
+    "ville": "Carcassonne",
+    "contact": "groupecarcassonne@gmail.com",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 43.2122,
+    "lng": 2.3537
+  },
+  {
+    "id": 4,
+    "page": 1,
+    "organisation": "Organisation Anarchiste (OA)",
+    "nom": "Liaison Région parisienne",
+    "ville": "Région parisienne / 93",
+    "contact": "oa@infosetanalyseslibertaires.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 48.91,
+    "lng": 2.45
+  },
+  {
+    "id": 5,
+    "page": 1,
+    "organisation": "Organisation Anarchiste (OA)",
+    "nom": "Liaison du Gers",
+    "ville": "Auch / Gers",
+    "contact": "oa@infosetanalyseslibertaires.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 43.6464,
+    "lng": 0.5857
+  },
+  {
+    "id": 6,
+    "page": 1,
+    "organisation": "Organisation Anarchiste (OA)",
+    "nom": "Liaison Orléans",
+    "ville": "Orléans",
+    "contact": "oa@infosetanalyseslibertaires.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 47.903,
+    "lng": 1.9093
+  },
+  {
+    "id": 7,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Nomade La Roulotte Noire",
+    "ville": "Nomade",
+    "contact": "groupe-nomade@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 46.603354,
+    "lng": 1.888334
+  },
+  {
+    "id": 8,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Kropotkine",
+    "ville": "Aisne / Merlieux",
+    "contact": "kropotkine02@riseup.net",
+    "adresse": "Athénée Le Loup Noir, 8 rue Fouquerolles, 02000 Merlieux",
+    "type": "Groupe",
+    "lat": 49.5218,
+    "lng": 3.5415
+  },
+  {
+    "id": 9,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Étoile Noire",
+    "ville": "Allier",
+    "contact": "etoile-noire@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 46.34,
+    "lng": 3.14
+  },
+  {
+    "id": 10,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe d'Aubenas",
+    "ville": "Ardèche",
+    "contact": "fa-groupe-daubenas@wanadoo.fr",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 44.75,
+    "lng": 4.4
+  },
+  {
+    "id": 11,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe La Chèvre Noire",
+    "ville": "Ardèche",
+    "contact": "groupe-lachevrenoire@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 44.75,
+    "lng": 4.4
+  },
+  {
+    "id": 12,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Ariège",
+    "ville": "Ariège",
+    "contact": "ariege@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 42.9,
+    "lng": 1.4
+  },
+  {
+    "id": 13,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Sud-Aveyron",
+    "ville": "Aveyron",
+    "contact": "sud-aveyron@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 44.15,
+    "lng": 2.6
+  },
+  {
+    "id": 14,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison La Ciotat",
+    "ville": "Bouches-du-Rhône",
+    "contact": "liaison-la-ciotat@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 43.5,
+    "lng": 5.2
+  },
+  {
+    "id": 15,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Oaï",
+    "ville": "Marseille",
+    "contact": "oai@federation-anarchiste.org",
+    "adresse": "Marseille",
+    "type": "Groupe",
+    "lat": 43.2965,
+    "lng": 5.3698
+  },
+  {
+    "id": 16,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Emma Goldman",
+    "ville": "Périgueux",
+    "contact": "perigueux@federation-anarchiste.org",
+    "adresse": "Périgueux",
+    "type": "Groupe",
+    "lat": 45.1847,
+    "lng": 0.7217
+  },
+  {
+    "id": 17,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Pierre Joseph Proudhon",
+    "ville": "Besançon",
+    "contact": "groupe-proudhon@federation-anarchiste.org",
+    "adresse": "c/o CESL BP 121, 25014 Besançon Cedex",
+    "type": "Groupe",
+    "lat": 47.2378,
+    "lng": 6.0241
+  },
+  {
+    "id": 18,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Le Ferment",
+    "ville": "Finistère",
+    "contact": "leferment@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.15,
+    "lng": -4.1
+  },
+  {
+    "id": 19,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Nathalie Le Mel",
+    "ville": "Finistère",
+    "contact": "nathalie-le-mel@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.15,
+    "lng": -4.1
+  },
+  {
+    "id": 20,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Son of Anarchy 34",
+    "ville": "Hérault",
+    "contact": "sonofanarchy34@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 43.6,
+    "lng": 3.5
+  },
+  {
+    "id": 21,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe La Sociale",
+    "ville": "Rennes",
+    "contact": "contact@falasociale.org",
+    "adresse": "c/o Local La Commune, 17 rue de Châteaudun, 35000 Rennes",
+    "type": "Groupe",
+    "lat": 48.1173,
+    "lng": -1.6778
+  },
+  {
+    "id": 22,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Nestor Makhno",
+    "ville": "Saint-Étienne",
+    "contact": "groupe.makhno42@gmail.com",
+    "adresse": "Bourse du Travail, salle 15 bis, cours Victor Hugo, 42028 Saint-Étienne Cedex 1",
+    "type": "Groupe",
+    "lat": 45.4397,
+    "lng": 4.3872
+  },
+  {
+    "id": 23,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe René Lochu",
+    "ville": "Vannes",
+    "contact": "groupe.lochu@riseup.net",
+    "adresse": "Maison des associations, 31 rue Guillaume Le Bartz, 56000 Vannes",
+    "type": "Groupe",
+    "lat": 47.6586,
+    "lng": -2.7599
+  },
+  {
+    "id": 24,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Salvador Segui",
+    "ville": "Paris",
+    "contact": "groupsalvadorsegui@gmail.com",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 25,
+    "page": 1,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Pierre Besnard",
+    "ville": "Paris",
+    "contact": "pierre-besnard@outlook.fr",
+    "adresse": "145 rue Amelot, 75011 Paris",
+    "type": "Groupe",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 26,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Commune de Paris",
+    "ville": "Paris",
+    "contact": "commune-de-paris@federation-anarchiste.org",
+    "adresse": "145 rue Amelot, 75011 Paris",
+    "type": "Groupe",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 27,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe La Révolte",
+    "ville": "Paris",
+    "contact": "la-revolte@federation-anarchiste.org",
+    "adresse": "145 rue Amelot, 75011 Paris",
+    "type": "Groupe",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 28,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Louise Michel",
+    "ville": "Paris",
+    "contact": "groupe-louise-michel@federation-anarchiste.org",
+    "adresse": "145 rue Amelot, 75011 Paris",
+    "type": "Groupe",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 29,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe de Rouen",
+    "ville": "Rouen",
+    "contact": "rouen@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 49.4432,
+    "lng": 1.0999
+  },
+  {
+    "id": 30,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Henry Poulaille",
+    "ville": "Saint-Denis",
+    "contact": "groupe-henry-poulaille@wanadoo.fr",
+    "adresse": "c/o La Dionyversité, 4 place Paul Langevin, 93200 Saint-Denis",
+    "type": "Groupe",
+    "lat": 48.9362,
+    "lng": 2.3574
+  },
+  {
+    "id": 31,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe libertaire d'Ivry",
+    "ville": "Ivry-sur-Seine",
+    "contact": "ivry@anarchiste.info",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.8153,
+    "lng": 2.3875
+  },
+  {
+    "id": 32,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Poitiers",
+    "ville": "Poitiers",
+    "contact": "poitiers@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 46.5802,
+    "lng": 0.3404
+  },
+  {
+    "id": 33,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Haute-Saône",
+    "ville": "Haute-Saône",
+    "contact": "liaison.haute-saone@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 47.6333,
+    "lng": 6.15
+  },
+  {
+    "id": 34,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison La Vache Noire",
+    "ville": "Mâcon / Saône-et-Loire",
+    "contact": "lavachenoire@le-local-libertaire.com",
+    "adresse": "399 quai Jean Jaurès, 71000 Mâcon",
+    "type": "Liaison",
+    "lat": 46.3069,
+    "lng": 4.8317
+  },
+  {
+    "id": 35,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Bas-Rhin",
+    "ville": "Bas-Rhin",
+    "contact": "liaison-bas-rhin@federation-anarchiste.org",
+    "adresse": "c/o REMON BP 35, 67340 Ingwiller",
+    "type": "Liaison",
+    "lat": 48.7,
+    "lng": 7.6
+  },
+  {
+    "id": 36,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Commune de Lyon",
+    "ville": "Lyon",
+    "contact": "communedelyon@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 45.764,
+    "lng": 4.8357
+  },
+  {
+    "id": 37,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison Evry-Corbeil",
+    "ville": "Essonne",
+    "contact": "evry-corbeil@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 48.5,
+    "lng": 2.3
+  },
+  {
+    "id": 38,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Liaison 87",
+    "ville": "Haute-Vienne",
+    "contact": "liaisonfa87@proton.me",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 45.8,
+    "lng": 1.25
+  },
+  {
+    "id": 39,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Les ELAFF",
+    "ville": "Tarn",
+    "contact": "elaf@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 43.9,
+    "lng": 2.15
+  },
+  {
+    "id": 40,
+    "page": 2,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Henri Laborit",
+    "ville": "Vendée",
+    "contact": "henri-laborit@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 46.67,
+    "lng": -1.43
+  },
+  {
+    "id": 41,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Ain",
+    "ville": "Ain",
+    "contact": "ucl-ain@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 46.1,
+    "lng": 5.3
+  },
+  {
+    "id": 42,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Clermont-Ferrand",
+    "ville": "Clermont-Ferrand",
+    "contact": "ucl-clermont-ferrand@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.7772,
+    "lng": 3.087
+  },
+  {
+    "id": 43,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Grenoble",
+    "ville": "Grenoble",
+    "contact": "ucl-grenoble@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.1885,
+    "lng": 5.7245
+  },
+  {
+    "id": 44,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Le Puy-en-Velay",
+    "ville": "Le Puy-en-Velay",
+    "contact": "ucl-lepuyenvelay@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.0428,
+    "lng": 3.8829
+  },
+  {
+    "id": 45,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Lyon",
+    "ville": "Lyon",
+    "contact": "ucl-lyon@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.764,
+    "lng": 4.8357
+  },
+  {
+    "id": 46,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Saint-Étienne",
+    "ville": "Saint-Étienne",
+    "contact": "ucl-saint-etienne@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.4397,
+    "lng": 4.3872
+  },
+  {
+    "id": 47,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Savoies",
+    "ville": "Savoie",
+    "contact": "ucl_chambery.savoie@inventati.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.55,
+    "lng": 6.5
+  },
+  {
+    "id": 48,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Alpes-Provence",
+    "ville": "Alpes-Provence",
+    "contact": "ucl-alpesprovence@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 44.0,
+    "lng": 6.0
+  },
+  {
+    "id": 49,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Marseille",
+    "ville": "Marseille",
+    "contact": "ucl-marseille@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 43.2965,
+    "lng": 5.3698
+  },
+  {
+    "id": 50,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Aix-en-Provence / liaison Marseille",
+    "ville": "Aix-en-Provence",
+    "contact": "ucl-aix-en-pce@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 43.5297,
+    "lng": 5.4474
+  },
+  {
+    "id": 51,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Var / Toulon",
+    "ville": "Var / Toulon",
+    "contact": "ucl-var@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe / liaison",
+    "lat": 43.1242,
+    "lng": 5.928
+  },
+  {
+    "id": 52,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Angers",
+    "ville": "Angers",
+    "contact": "ucl-angers@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 47.4784,
+    "lng": -0.5632
+  },
+  {
+    "id": 53,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Nantes",
+    "ville": "Nantes",
+    "contact": "ucl-nantes@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 47.2184,
+    "lng": -1.5536
+  },
+  {
+    "id": 54,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Sarthe",
+    "ville": "Sarthe",
+    "contact": "ucl-sarthe@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.0,
+    "lng": 0.2
+  },
+  {
+    "id": 55,
+    "page": 2,
+    "organisation": "UCL",
+    "nom": "UCL Dordogne",
+    "ville": "Dordogne",
+    "contact": "ucl-dordogne@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.15,
+    "lng": 0.7
+  },
+  {
+    "id": 56,
+    "page": 3,
+    "organisation": "UCL",
+    "nom": "UCL Limousin",
+    "ville": "Limousin",
+    "contact": "ucl-limousin@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 45.8,
+    "lng": 1.7
+  },
+  {
+    "id": 57,
+    "page": 3,
+    "organisation": "UCL",
+    "nom": "UCL Banlieue Sud-Est",
+    "ville": "Île-de-France",
+    "contact": "ucl-bse@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.8499,
+    "lng": 2.637
+  },
+  {
+    "id": 58,
+    "page": 3,
+    "organisation": "UCL",
+    "nom": "UCL Montreuil",
+    "ville": "Montreuil",
+    "contact": "ucl-montreuil@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.8638,
+    "lng": 2.4484
+  },
+  {
+    "id": 59,
+    "page": 3,
+    "organisation": "UCL",
+    "nom": "UCL Paris Nord-Est",
+    "ville": "Paris",
+    "contact": "ucl-paris-nordest@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 60,
+    "page": 3,
+    "organisation": "UCL",
+    "nom": "UCL Saint-Denis",
+    "ville": "Saint-Denis",
+    "contact": "ucl-saint-denis@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 48.9362,
+    "lng": 2.3574
+  },
+  {
+    "id": 61,
+    "page": 3,
+    "organisation": "UCL",
+    "nom": "UCL Dijon",
+    "ville": "Dijon",
+    "contact": "ucl-dijon@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 47.322,
+    "lng": 5.0415
+  },
+  {
+    "id": 62,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "Organisation communiste libertaire",
+    "ville": "Reims",
+    "contact": "oclibertaire@hotmail.com",
+    "adresse": "OCL c/o Égrégore, BP 1213, 51058 Reims Cedex",
+    "type": "Organisation",
+    "lat": 49.2583,
+    "lng": 4.0317
+  },
+  {
+    "id": 63,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "CNT-AIT national",
+    "ville": "Toulouse",
+    "contact": "contact@cnt-ait.info",
+    "adresse": "7 rue Saint-Rémésy, 31000 Toulouse",
+    "type": "Organisation",
+    "lat": 43.6047,
+    "lng": 1.4442
+  },
+  {
+    "id": 64,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Paris / Banlieue",
+    "ville": "Île-de-France",
+    "contact": "contact@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 48.8499,
+    "lng": 2.637
+  },
+  {
+    "id": 65,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Montauban / Quercy-Rouergue",
+    "ville": "Montauban",
+    "contact": "montauban@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 44.0175,
+    "lng": 1.355
+  },
+  {
+    "id": 66,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Sud-Ouest",
+    "ville": "Toulouse / Sud-Ouest",
+    "contact": "toulouse@cntaittoulouse.lautre.net",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 43.6047,
+    "lng": 1.4442
+  },
+  {
+    "id": 67,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Grand-Ouest",
+    "ville": "Bretagne / Pays de la Loire",
+    "contact": "ingo-cntait@revlibertaire.com",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 48.0,
+    "lng": -2.0
+  },
+  {
+    "id": 68,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Allier",
+    "ville": "Allier",
+    "contact": "initiative.03@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 46.34,
+    "lng": 3.14
+  },
+  {
+    "id": 69,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Aveyron",
+    "ville": "Aveyron",
+    "contact": "aveyron@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 44.15,
+    "lng": 2.6
+  },
+  {
+    "id": 70,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Perpignan / Pyrénées-Orientales",
+    "ville": "Perpignan",
+    "contact": "perpignan@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 42.6986,
+    "lng": 2.8956
+  },
+  {
+    "id": 71,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Nord / Est",
+    "ville": "Nord / Est",
+    "contact": "contact@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 50.0,
+    "lng": 3.0
+  },
+  {
+    "id": 72,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Centre",
+    "ville": "Centre",
+    "contact": "contact@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 47.5,
+    "lng": 1.7
+  },
+  {
+    "id": 73,
+    "page": 3,
+    "organisation": "CNT-AIT",
+    "nom": "Normandie",
+    "ville": "Normandie",
+    "contact": "contact@cnt-ait.info",
+    "adresse": "—",
+    "type": "Section / groupe",
+    "lat": 49.0,
+    "lng": 0.3
+  },
+  {
+    "id": 74,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Confédération nationale du travail",
+    "ville": "Paris",
+    "contact": "Viacnt-f.org",
+    "adresse": "33 rue des Vignoles, 75020 Paris",
+    "type": "Organisation",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 75,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union régionale parisienne",
+    "ville": "Paris / Île-de-France",
+    "contact": "br.rp@cnt-f.org",
+    "adresse": "33 rue des Vignoles, 75020 Paris",
+    "type": "Union régionale",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 76,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union locale de Toulouse (CNT 31)",
+    "ville": "Toulouse",
+    "contact": "is.31@cnt-f.org",
+    "adresse": "Au Chat Noir, 270 avenue de Muret, 31300 Toulouse",
+    "type": "Union locale",
+    "lat": 43.6047,
+    "lng": 1.4442
+  },
+  {
+    "id": 77,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union régionale Midi-Pyrénées",
+    "ville": "Toulouse / Midi-Pyrénées",
+    "contact": "midipyrenees@cnt-f.org",
+    "adresse": "Au Chat Noir, 270 avenue de Muret, 31300 Toulouse",
+    "type": "Union régionale",
+    "lat": 43.6047,
+    "lng": 1.4442
+  },
+  {
+    "id": 78,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union départementale de Gironde (CNT 33)",
+    "ville": "Bordeaux",
+    "contact": "Viaul33.cnt-f.org",
+    "adresse": "36 rue Sanche-de-Pomiers, 33000 Bordeaux",
+    "type": "Union locale",
+    "lat": 44.8378,
+    "lng": -0.5792
+  },
+  {
+    "id": 79,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union locale de Nantes (interco 44)",
+    "ville": "Nantes",
+    "contact": "interco44@cnt-f.org",
+    "adresse": "B17, 17 rue Paul Bellamy, 44000 Nantes",
+    "type": "Union locale",
+    "lat": 47.2184,
+    "lng": -1.5536
+  },
+  {
+    "id": 80,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union locale de Saint-Étienne (CNT 42)",
+    "ville": "Saint-Étienne",
+    "contact": "cnt42@cnt-f.org",
+    "adresse": "Bourse du Travail, salle 15 bis, cours Victor Hugo, 42028 Saint-Étienne Cedex 1",
+    "type": "Union locale",
+    "lat": 45.4397,
+    "lng": 4.3872
+  },
+  {
+    "id": 81,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union locale de Rennes (CNT 35)",
+    "ville": "Rennes",
+    "contact": "Via35.cnt-f.org",
+    "adresse": "BP 30423, 35004 Rennes Cedex",
+    "type": "Union locale",
+    "lat": 48.1173,
+    "lng": -1.6778
+  },
+  {
+    "id": 82,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union régionale Rhône-Alpes / UD Rhône",
+    "ville": "Lyon",
+    "contact": "Viacnt-f.org/cnt69",
+    "adresse": "44 rue Burdeau, 69001 Lyon",
+    "type": "Union régionale",
+    "lat": 45.764,
+    "lng": 4.8357
+  },
+  {
+    "id": 83,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Union locale de Lille (SSEC 59-62)",
+    "ville": "Lille",
+    "contact": "ssec5962@cnt-f.org",
+    "adresse": "32 rue d'Arras, 59000 Lille",
+    "type": "Union locale",
+    "lat": 50.6292,
+    "lng": 3.0573
+  },
+  {
+    "id": 84,
+    "page": 3,
+    "organisation": "CNT-F / Vignoles",
+    "nom": "Syndicat interprofessionnel de Strasbourg (67)",
+    "ville": "Strasbourg",
+    "contact": "interpro67@cnt-f.org",
+    "adresse": "Maison des syndicats, 1 rue Sedillot, 67000 Strasbourg",
+    "type": "Union locale",
+    "lat": 48.5734,
+    "lng": 7.7521
+  },
+  {
+    "id": 85,
+    "page": 3,
+    "organisation": "CNT-SO",
+    "nom": "CNT-Solidarité Ouvrière",
+    "ville": "Paris",
+    "contact": "Viacnt-so.org",
+    "adresse": "Contact national",
+    "type": "Organisation",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 86,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "Permanence Île-de-France",
+    "ville": "Île-de-France",
+    "contact": "contact@cnt-so.org",
+    "adresse": "Permanence sur RDV",
+    "type": "Permanence",
+    "lat": 48.8499,
+    "lng": 2.637
+  },
+  {
+    "id": 87,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "Permanence Bouches-du-Rhône (13)",
+    "ville": "Marseille",
+    "contact": "contact13@cnt-so.org",
+    "adresse": "24-28 rue abbé Féraud, 13005 Marseille",
+    "type": "Permanence",
+    "lat": 43.2965,
+    "lng": 5.3698
+  },
+  {
+    "id": 88,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "Union départementale du Rhône (69)",
+    "ville": "Villeurbanne / Lyon",
+    "contact": "ud69@cnt-so.org",
+    "adresse": "8 rue Paul Lafargue, 69100 Villeurbanne",
+    "type": "Permanence",
+    "lat": 45.7667,
+    "lng": 4.8833
+  },
+  {
+    "id": 89,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "Permanence Auvergne",
+    "ville": "Auvergne",
+    "contact": "auvergne@cnt-so.org",
+    "adresse": "—",
+    "type": "Permanence",
+    "lat": 45.5,
+    "lng": 3.0
+  },
+  {
+    "id": 90,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "Permanence Poitou-Charentes",
+    "ville": "Poitiers",
+    "contact": "poitoucharentes@cnt-so.org",
+    "adresse": "—",
+    "type": "Permanence",
+    "lat": 46.5802,
+    "lng": 0.3404
+  },
+  {
+    "id": 91,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "Permanence Aquitaine",
+    "ville": "Aquitaine (24-33-40-47-64)",
+    "contact": "aquitaine@cnt-so.org",
+    "adresse": "—",
+    "type": "Permanence",
+    "lat": 44.5,
+    "lng": -0.5
+  },
+  {
+    "id": 92,
+    "page": 4,
+    "organisation": "CNT-SO",
+    "nom": "STAA — Syndicat des travailleur.euse.s artistes-auteur.ice.s",
+    "ville": "Paris",
+    "contact": "contact@staa-cnt-so.org",
+    "adresse": "—",
+    "type": "Fédération",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 93,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Athénée libertaire",
+    "ville": "Bordeaux",
+    "contact": "—",
+    "adresse": "7 rue du Muguet, 33000 Bordeaux",
+    "type": "Local",
+    "lat": 44.8378,
+    "lng": -0.5792
+  },
+  {
+    "id": 94,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Le Loup Noir",
+    "ville": "Merlieux",
+    "contact": "—",
+    "adresse": "8 rue de Fouquerolles, 02000 Merlieux",
+    "type": "Local",
+    "lat": 49.5218,
+    "lng": 3.5415
+  },
+  {
+    "id": 95,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "B17",
+    "ville": "Nantes",
+    "contact": "—",
+    "adresse": "17 rue Paul Bellamy, 44000 Nantes",
+    "type": "Local",
+    "lat": 47.2184,
+    "lng": -1.5536
+  },
+  {
+    "id": 96,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Le 102",
+    "ville": "Grenoble",
+    "contact": "—",
+    "adresse": "102 rue d'Alembert, 38000 Grenoble",
+    "type": "Local",
+    "lat": 45.1885,
+    "lng": 5.7245
+  },
+  {
+    "id": 97,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Mille Bâbords",
+    "ville": "Marseille",
+    "contact": "—",
+    "adresse": "61 rue Consolat, 13001 Marseille",
+    "type": "Local",
+    "lat": 43.2965,
+    "lng": 5.3698
+  },
+  {
+    "id": 98,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Molodoï",
+    "ville": "Strasbourg",
+    "contact": "info@molodoi.net",
+    "adresse": "19 rue du Ban de la Roche, 67000 Strasbourg",
+    "type": "Local",
+    "lat": 48.5734,
+    "lng": 7.7521
+  },
+  {
+    "id": 99,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Quilombo",
+    "ville": "Paris",
+    "contact": "quilombo@globnet.org",
+    "adresse": "21 ter rue Voltaire, 75011 Paris",
+    "type": "Librairie",
+    "lat": 48.8566,
+    "lng": 2.3522
+  },
+  {
+    "id": 100,
+    "page": 4,
+    "organisation": "Indépendant / local",
+    "nom": "Jules Durand",
+    "ville": "Le Havre",
+    "contact": "julesdurand.lehavre@gmail.com",
+    "adresse": "Groupe d'Études Sociales du Havre et environs — BP 411, 76057 Le Havre Cedex",
+    "type": "Collectif",
+    "lat": 49.4944,
+    "lng": 0.1079
+  },
+  {
+    "id": 101,
+    "page": 4,
+    "organisation": "Fédération anarchiste (FA)",
+    "nom": "Groupe Ici et Maintenant",
+    "ville": "Belgique",
+    "contact": "groupe-ici-et-maintenant@federation-anarchiste.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 50.5039,
+    "lng": 4.4699
+  },
+  {
+    "id": 102,
+    "page": 4,
+    "organisation": "UCL",
+    "nom": "UCL Bruxelles",
+    "ville": "Bruxelles",
+    "contact": "ucl-bruxelles@communisteslibertaires.org",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 50.8503,
+    "lng": 4.3517
+  },
+  {
+    "id": 103,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Anarchistisch Collectief Antwerpen (ACA)",
+    "ville": "Anvers",
+    "contact": "info@acollectiefantwerpen.be",
+    "adresse": "—",
+    "type": "Collectif",
+    "lat": 51.2194,
+    "lng": 4.4025
+  },
+  {
+    "id": 104,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Anarchistisch Collectief Brugge",
+    "ville": "Bruges",
+    "contact": "anarchistischcollectiefbrugge@protonmail.com",
+    "adresse": "—",
+    "type": "Collectif",
+    "lat": 51.2093,
+    "lng": 3.2247
+  },
+  {
+    "id": 105,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Vrij Collectief Kortrijk",
+    "ville": "Courtrai",
+    "contact": "vrijcollectiefkortrijk@proton.me",
+    "adresse": "—",
+    "type": "Collectif",
+    "lat": 50.828,
+    "lng": 3.265
+  },
+  {
+    "id": 106,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Leuvense Anarchistische Groep (LAG)",
+    "ville": "Louvain",
+    "contact": "leuvenseag@riseup.net",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 50.8798,
+    "lng": 4.7005
+  },
+  {
+    "id": 107,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Ligue Libre / Vrije Bond Belgique",
+    "ville": "Belgique",
+    "contact": "contact.belgie@vrijebond.nl",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 50.5039,
+    "lng": 4.4699
+  },
+  {
+    "id": 108,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Anarchistische Boekenbeurs Gent",
+    "ville": "Gand",
+    "contact": "abgent@riseup.net",
+    "adresse": "—",
+    "type": "Collectif",
+    "lat": 51.0543,
+    "lng": 3.7174
+  },
+  {
+    "id": 109,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Anarchief Gent",
+    "ville": "Gand",
+    "contact": "info@anarchief.be",
+    "adresse": "—",
+    "type": "Local",
+    "lat": 51.0543,
+    "lng": 3.7174
+  },
+  {
+    "id": 110,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "La B.O.U.M. — Bibliothèque anarchiste",
+    "ville": "Bruxelles",
+    "contact": "bibli-anar-bxl@proton.me",
+    "adresse": "—",
+    "type": "Librairie",
+    "lat": 50.8503,
+    "lng": 4.3517
+  },
+  {
+    "id": 111,
+    "page": 4,
+    "organisation": "Indépendant / local (Belgique)",
+    "nom": "Stuut — collectif anarchiste/autonome",
+    "ville": "Bruxelles",
+    "contact": "contact@stuut.info",
+    "adresse": "—",
+    "type": "Collectif",
+    "lat": 50.8503,
+    "lng": 4.3517
+  }
+];
+
+/* ==========================================================================
+   Répertoire Libertaire - Application Logic
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+  // App State
+  let filteredData = [...LIBERTAIRE_DATA];
+  let favorites = JSON.parse(localStorage.getItem('libertaire_favs') || '[]');
+  let currentView = 'grid'; // 'grid' | 'table' | 'map'
+  let activePill = null;
+  let showOnlyFavorites = false;
+  let mapInstance = null;
+  let markerClusterGroup = null;
+
+  // DOM Elements
+  const searchInput = document.getElementById('searchInput');
+  const orgFilter = document.getElementById('orgFilter');
+  const typeFilter = document.getElementById('typeFilter');
+  const countryFilter = document.getElementById('countryFilter');
+  const sortBy = document.getElementById('sortBy');
+  const gridView = document.getElementById('gridView');
+  const tableView = document.getElementById('tableView');
+  const tableBody = document.getElementById('tableBody');
+  const mapView = document.getElementById('mapView');
+  const emptyState = document.getElementById('emptyState');
+  const visibleCount = document.getElementById('visibleCount');
+  const favCount = document.getElementById('favCount');
+  const statFilteredCount = document.getElementById('statFilteredCount');
+  const toggleFavoritesBtn = document.getElementById('toggleFavoritesBtn');
+  const exportCsvBtn = document.getElementById('exportCsvBtn');
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+
+  // Modal Elements
+  const detailModal = document.getElementById('detailModal');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const modalOrgBadge = document.getElementById('modalOrgBadge');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalType = document.getElementById('modalType');
+  const modalVille = document.getElementById('modalVille');
+  const modalAdresse = document.getElementById('modalAdresse');
+  const modalContactLink = document.getElementById('modalContactLink');
+  const copyModalEmailBtn = document.getElementById('copyModalEmailBtn');
+  const modalPage = document.getElementById('modalPage');
+  const modalFavBtn = document.getElementById('modalFavBtn');
+  let currentModalItem = null;
+
+  // Organization Badge Classes
+  
+  function getOrgLogoSvg(org) {
+    if (!org) return '<svg class="org-logo-svg" viewBox="0 0 32 32" width="18" height="18" style="vertical-align: middle;"><rect width="32" height="32" rx="6" fill="#18181c" stroke="#71717a" stroke-width="1.5"/><path d="M16 6 L26 14 V26 H6 V14 Z" fill="none" stroke="#a1a1aa" stroke-width="1.5"/></svg>';
+    
+    if (org.includes('CNT-AIT')) {
+      return '<img src="cnt_ait_logo.png" class="org-logo-img" alt="CNT-AIT">';
+    }
+    if (org.includes('Fédération anarchiste') || org.includes('(FA)')) {
+      return '<img src="logo_fa.svg" class="org-logo-img" alt="FA">';
+    }
+    if (org.includes('UCL')) {
+      return '<img src="logo_ucl.svg" class="org-logo-img" alt="UCL">';
+    }
+    if (org.includes('CNT-F')) {
+      return '<img src="logo_cnt.svg" class="org-logo-img" alt="CNT-F">';
+    }
+    if (org.includes('CNT-SO')) {
+      return '<img src="logo_cnt_so.jpg" class="org-logo-img" alt="CNT-SO">';
+    }
+    if (org.includes('Organisation Anarchiste') || org.includes('OA')) {
+      return '<svg class="org-logo-svg" viewBox="0 0 32 32" width="18" height="18" style="vertical-align: middle;"><circle cx="16" cy="16" r="13" fill="#18181c" stroke="#ef4444" stroke-width="1.5"/><text x="16" y="21" font-size="11" font-weight="900" text-anchor="middle" fill="#ef4444" font-family="Outfit, sans-serif">OA</text></svg>';
+    }
+    if (org.includes('OCL')) {
+      return '<svg class="org-logo-svg" viewBox="0 0 32 32" width="18" height="18" style="vertical-align: middle;"><rect width="32" height="32" rx="6" fill="#18181c" stroke="#eab308" stroke-width="1.5"/><text x="16" y="21" font-size="10" font-weight="900" text-anchor="middle" fill="#eab308" font-family="Outfit, sans-serif">OCL</text></svg>';
+    }
+    return '<svg class="org-logo-svg" viewBox="0 0 32 32" width="18" height="18" style="vertical-align: middle;"><rect width="32" height="32" rx="6" fill="#18181c" stroke="#71717a" stroke-width="1.5"/><path d="M16 6 L26 14 V26 H6 V14 Z" fill="none" stroke="#a1a1aa" stroke-width="1.5"/></svg>';
+  }
+
+  function getOrgClass(org) {
+    if (!org) return 'badge-org-indep';
+    if (org.includes('CNT-AIT')) return 'badge-org-cnt-ait';
+    if (org.includes('Fédération anarchiste') || org.includes('(FA)')) return 'badge-org-fa';
+    if (org.includes('UCL')) return 'badge-org-ucl';
+    if (org.includes('CNT-F')) return 'badge-org-cnt-f';
+    if (org.includes('CNT-SO')) return 'badge-org-cnt-so';
+    if (org.includes('Organisation Anarchiste')) return 'badge-org-oa';
+    if (org.includes('OCL')) return 'badge-org-ocl';
+    return 'badge-org-indep';
+  }
+
+  function getMarkerColor(org) {
+    if (org.includes('CNT-AIT')) return '#ef4444';
+    if (org.includes('FA') || org.includes('Fédération')) return '#dc2626';
+    if (org.includes('UCL')) return '#71717a';
+    if (org.includes('CNT-F')) return '#b91c1c';
+    if (org.includes('CNT-SO')) return '#52525b';
+    if (org.includes('OA')) return '#f87171';
+    return '#8e8e93';
+  }
+
+  // Initial Setup
+  updateFavCount();
+  applyFilters();
+
+  // Event Listeners
+  searchInput.addEventListener('input', applyFilters);
+  orgFilter.addEventListener('change', applyFilters);
+  typeFilter.addEventListener('change', applyFilters);
+  countryFilter.addEventListener('change', applyFilters);
+  sortBy.addEventListener('change', applyFilters);
+  resetFiltersBtn.addEventListener('click', resetAllFilters);
+
+  // View Switchers
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetView = e.currentTarget.getAttribute('data-view');
+      switchView(targetView);
+    });
+  });
+
+  // Quick Filter Pills
+  document.querySelectorAll('.pill-btn[data-pill]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const pillVal = e.currentTarget.getAttribute('data-pill');
+      if (activePill === pillVal) {
+        activePill = null;
+        btn.classList.remove('active');
+      } else {
+        document.querySelectorAll('.pill-btn').forEach(p => p.classList.remove('active'));
+        activePill = pillVal;
+        btn.classList.add('active');
+      }
+      applyFilters();
+    });
+  });
+
+  // Toggle Favorites Only Filter
+  toggleFavoritesBtn.addEventListener('click', () => {
+    showOnlyFavorites = !showOnlyFavorites;
+    toggleFavoritesBtn.classList.toggle('btn-primary', showOnlyFavorites);
+    applyFilters();
+  });
+
+  // Export CSV
+  exportCsvBtn.addEventListener('click', exportToCsv);
+
+  // Theme Toggle
+  themeToggleBtn.addEventListener('click', () => {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    themeToggleBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    if (mapInstance) renderMapView();
+  });
+
+  // Modal Close
+  closeModalBtn.addEventListener('click', closeModal);
+  detailModal.addEventListener('click', (e) => {
+    if (e.target === detailModal) closeModal();
+  });
+
+  copyModalEmailBtn.addEventListener('click', () => {
+    if (currentModalItem && currentModalItem.contact) {
+      navigator.clipboard.writeText(currentModalItem.contact);
+      copyModalEmailBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+      setTimeout(() => {
+        copyModalEmailBtn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+      }, 1500);
+    }
+  });
+
+  modalFavBtn.addEventListener('click', () => {
+    if (currentModalItem) {
+      toggleFavorite(currentModalItem.id);
+      updateModalFavBtnState();
+      renderCurrentView();
+    }
+  });
+
+  // Filter & Sort Core Logic
+  function applyFilters() {
+    const query = searchInput.value ? searchInput.value.toLowerCase().trim() : '';
+    const selOrg = orgFilter.value;
+    const selType = typeFilter.value;
+    const selCountry = countryFilter.value;
+
+    filteredData = LIBERTAIRE_DATA.filter(item => {
+      // Search term
+      if (query) {
+        const matchesName = item.nom.toLowerCase().includes(query);
+        const matchesOrg = item.organisation.toLowerCase().includes(query);
+        const matchesVille = item.ville.toLowerCase().includes(query);
+        const matchesContact = item.contact.toLowerCase().includes(query);
+        const matchesAdresse = item.adresse.toLowerCase().includes(query);
+        const matchesType = item.type.toLowerCase().includes(query);
+        if (!matchesName && !matchesOrg && !matchesVille && !matchesContact && !matchesAdresse && !matchesType) {
+          return false;
+        }
+      }
+
+      // Org Filter
+      if (selOrg !== 'ALL' && item.organisation !== selOrg) {
+        return false;
+      }
+
+      // Type Filter
+      if (selType !== 'ALL') {
+        if (selType === 'Section / groupe' && !item.type.includes('Section')) return false;
+        else if (selType !== 'Section / groupe' && !item.type.includes(selType)) return false;
+      }
+
+      
+      const belgianCities = ['Belgique', 'Bruxelles', 'Anvers', 'Bruges', 'Courtrai', 'Louvain', 'Gand'];
+      const isBelgian = item.ville.includes('Belgique') || item.organisation.includes('Belgique') || belgianCities.some(c => item.ville.includes(c));
+
+      if (selCountry === 'BE' && !isBelgian) {
+        return false;
+      }
+      if (selCountry === 'FR' && isBelgian) {
+        return false;
+      }
+
+      if (activePill) {
+        if (activePill === 'cnt-ait' && !item.organisation.includes('CNT-AIT')) return false;
+        if (activePill === 'fa' && !item.organisation.includes('Fédération anarchiste')) return false;
+        if (activePill === 'ucl' && !item.organisation.includes('UCL')) return false;
+        if (activePill === 'cnt-f' && !item.organisation.includes('CNT-F')) return false;
+        if (activePill === 'cnt-so' && !item.organisation.includes('CNT-SO')) return false;
+        if (activePill === 'belgique' && !isBelgian) return false;
+        if (activePill === 'locaux' && !['Local', 'Librairie', 'Collectif'].includes(item.type)) return false;
+      }
+
+      if (showOnlyFavorites && !favorites.includes(item.id)) {
+        return false;
+      }
+
+      return true;
+    });
+
+    // Sorting
+    const sortMode = sortBy.value;
+    filteredData.sort((a, b) => {
+      if (sortMode === 'nom-asc') return a.nom.localeCompare(b.nom);
+      if (sortMode === 'nom-desc') return b.nom.localeCompare(a.nom);
+      if (sortMode === 'org-asc') return a.organisation.localeCompare(b.organisation);
+      if (sortMode === 'ville-asc') return a.ville.localeCompare(b.ville);
+      return 0;
+    });
+
+    // Update Counters
+    visibleCount.textContent = filteredData.length;
+    statFilteredCount.textContent = filteredData.length;
+
+    // Toggle Empty State
+    if (filteredData.length === 0) {
+      emptyState.classList.remove('hidden');
+      gridView.classList.add('hidden');
+      tableView.classList.add('hidden');
+      mapView.classList.add('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      renderCurrentView();
+    }
+  }
+
+  function resetAllFilters() {
+    searchInput.value = '';
+    orgFilter.value = 'ALL';
+    typeFilter.value = 'ALL';
+    countryFilter.value = 'ALL';
+    sortBy.value = 'nom-asc';
+    activePill = null;
+    showOnlyFavorites = false;
+    toggleFavoritesBtn.classList.remove('btn-primary');
+    document.querySelectorAll('.pill-btn').forEach(p => p.classList.remove('active'));
+    applyFilters();
+  }
+
+  // Switch View (Grid / Table / Map)
+  function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-view') === view);
+    });
+
+    gridView.classList.toggle('hidden', view !== 'grid');
+    tableView.classList.toggle('hidden', view !== 'table');
+    mapView.classList.toggle('hidden', view !== 'map');
+
+    if (filteredData.length > 0) {
+      renderCurrentView();
+    }
+  }
+
+  function renderCurrentView() {
+    if (currentView === 'grid') renderGridView();
+    else if (currentView === 'table') renderTableView();
+    else if (currentView === 'map') renderMapView();
+  }
+
+  // Render Cards Grid View
+  function renderGridView() {
+    gridView.innerHTML = '';
+
+    filteredData.forEach(item => {
+      const isFav = favorites.includes(item.id);
+      const orgClass = getOrgClass(item.organisation);
+
+      const card = document.createElement('div');
+      card.className = 'entry-card';
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-badges">
+            <span class="badge ${orgClass}">${getOrgLogoSvg(item.organisation)} ${escapeHtml(item.organisation)}</span>
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+              <span class="badge badge-type">${escapeHtml(item.type || 'Structure')}</span>
+              <button class="fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="Ajouter aux favoris">
+                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+              </button>
+            </div>
+          </div>
+          
+          <h3 class="card-title">${escapeHtml(item.nom)}</h3>
+
+          ${item.ville ? `<div class="card-location"><i class="fa-solid fa-location-dot"></i> ${escapeHtml(item.ville)}</div>` : ''}
+        </div>
+
+        <div class="card-body-info">
+          ${item.contact ? `
+            <div class="info-item">
+              <i class="fa-solid fa-envelope"></i>
+              <span>${formatContactLink(item.contact)}</span>
+            </div>
+          ` : ''}
+
+          ${item.adresse && item.adresse !== '—' ? `
+            <div class="info-item">
+              <i class="fa-solid fa-map-pin"></i>
+              <span>${escapeHtml(item.adresse)}</span>
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-sm view-details-btn" data-id="${item.id}">
+            <i class="fa-solid fa-eye"></i> Détails
+          </button>
+          
+          ${item.contact && item.contact.includes('@') ? `
+            <a href="mailto:${item.contact}" class="btn btn-sm btn-primary">
+              <i class="fa-solid fa-paper-plane"></i> Contact
+            </a>
+          ` : ''}
+        </div>
+      `;
+
+      card.querySelector('.view-details-btn').addEventListener('click', () => openModal(item));
+      card.querySelector('.fav-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFavorite(item.id);
+        applyFilters();
+      });
+
+      gridView.appendChild(card);
+    });
+  }
+
+  // Render Table View
+  function renderTableView() {
+    tableBody.innerHTML = '';
+
+    filteredData.forEach((item, index) => {
+      const isFav = favorites.includes(item.id);
+      const orgClass = getOrgClass(item.organisation);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color: var(--text-muted); font-size: 0.8rem;">${index + 1}</td>
+        <td><span class="badge ${orgClass}">${getOrgLogoSvg(item.organisation)} ${escapeHtml(item.organisation)}</span></td>
+        <td><strong>${escapeHtml(item.nom)}</strong></td>
+        <td><i class="fa-solid fa-location-dot" style="color: var(--accent-red); margin-right: 4px;"></i> ${escapeHtml(item.ville || '—')}</td>
+        <td>${formatContactLink(item.contact)}</td>
+        <td style="font-size: 0.82rem;">${escapeHtml(item.adresse || '—')}</td>
+        <td><span class="badge badge-type">${escapeHtml(item.type || 'Structure')}</span></td>
+        <td>
+          <div style="display: flex; gap: 0.35rem;">
+            <button class="btn btn-icon view-details-btn" data-id="${item.id}" title="Voir détails"><i class="fa-solid fa-eye"></i></button>
+            <button class="btn btn-icon fav-btn ${isFav ? 'active' : ''}" data-id="${item.id}" title="Favori"><i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i></button>
+          </div>
+        </td>
+      `;
+
+      tr.querySelector('.view-details-btn').addEventListener('click', () => openModal(item));
+      tr.querySelector('.fav-btn').addEventListener('click', () => {
+        toggleFavorite(item.id);
+        applyFilters();
+      });
+
+      tableBody.appendChild(tr);
+    });
+  }
+
+  // Render Map View (Leaflet with MarkerCluster & Jitter to display ALL 111 sections)
+  function renderMapView() {
+    if (!mapInstance) {
+      mapInstance = L.map('map', { attributionControl: false }).setView([46.603354, 1.888334], 6);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO',
+        maxZoom: 19
+      }).addTo(mapInstance);
+    }
+
+    if (markerClusterGroup) {
+      mapInstance.removeLayer(markerClusterGroup);
+    }
+
+    markerClusterGroup = L.featureGroup();
+
+    // Group items by coordinate to compute exact spiral fan-out so ALL 111 logos are visible simultaneously
+    const cityGroups = {};
+    filteredData.forEach(item => {
+      const key = `${item.lat.toFixed(3)}_${item.lng.toFixed(3)}`;
+      if (!cityGroups[key]) cityGroups[key] = [];
+      cityGroups[key].push(item);
+    });
+
+    Object.values(cityGroups).forEach(items => {
+      const total = items.length;
+      items.forEach((item, index) => {
+        let finalLat = item.lat;
+        let finalLng = item.lng;
+
+        if (total > 1 && index > 0) {
+          const angle = index * 2.39996; // Golden angle spiral
+          const radius = 0.012 * Math.sqrt(index);
+          finalLat += radius * Math.cos(angle);
+          finalLng += (radius / Math.cos(item.lat * Math.PI / 180)) * Math.sin(angle);
+        }
+
+        const logoIcon = L.divIcon({
+          className: 'custom-map-logo-pin',
+          html: `<div class="map-pin-wrapper" title="${escapeHtml(item.nom)} (${escapeHtml(item.organisation)})">${getOrgLogoSvg(item.organisation)}</div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
+          popupAnchor: [0, -16]
+        });
+
+        const marker = L.marker([finalLat, finalLng], { icon: logoIcon });
+
+        const popupContent = `
+          <div class="map-popup-card">
+            <div style="display: inline-flex; align-items: center; gap: 4px; background: rgba(220, 38, 38, 0.25); color: #fca5a5; border: 1px solid rgba(220, 38, 38, 0.5); padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700;">${getOrgLogoSvg(item.organisation)} ${escapeHtml(item.organisation)}</div>
+            <h4 style="margin-top: 6px; font-size: 14px; font-weight: 700; color: #ffffff;">${escapeHtml(item.nom)}</h4>
+            <p style="margin: 4px 0;"><i class="fa-solid fa-location-dot" style="color: var(--accent-red);"></i> ${escapeHtml(item.ville)}</p>
+            ${item.contact ? `<p style="margin: 4px 0;"><i class="fa-solid fa-envelope" style="color: var(--accent-red);"></i> ${escapeHtml(item.contact)}</p>` : ''}
+            <button onclick="window.openDetailModal(${item.id})" style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; margin-top: 6px; width: 100%;">Voir détails complets</button>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent);
+        markerClusterGroup.addLayer(marker);
+      });
+    });
+
+    mapInstance.addLayer(markerClusterGroup);
+
+    if (filteredData.length > 0 && markerClusterGroup.getBounds().isValid()) {
+      mapInstance.fitBounds(markerClusterGroup.getBounds().pad(0.08));
+    }
+
+    setTimeout(() => mapInstance.invalidateSize(), 200);
+  }
+
+  // Modal Functions
+  window.openDetailModal = function(id) {
+    const item = LIBERTAIRE_DATA.find(x => x.id === id);
+    if (item) openModal(item);
+  };
+
+  function openModal(item) {
+    currentModalItem = item;
+    modalTitle.textContent = item.nom;
+    modalOrgBadge.innerHTML = getOrgLogoSvg(item.organisation) + " " + escapeHtml(item.organisation);
+    modalOrgBadge.className = `badge ${getOrgClass(item.organisation)}`;
+    modalType.textContent = item.type || '—';
+    modalVille.textContent = item.ville || '—';
+    modalAdresse.textContent = item.adresse || '—';
+    modalPage.textContent = `Page ${item.page} du document PDF CNT-AIT`;
+
+    if (item.contact) {
+      if (item.contact.includes('@')) {
+        modalContactLink.href = `mailto:${item.contact}`;
+        modalContactLink.textContent = item.contact;
+      } else {
+        modalContactLink.href = item.contact.startsWith('http') ? item.contact : `https://${item.contact}`;
+        modalContactLink.textContent = item.contact;
+      }
+    } else {
+      modalContactLink.textContent = 'Non renseigné';
+      modalContactLink.removeAttribute('href');
+    }
+
+    updateModalFavBtnState();
+    detailModal.classList.add('open');
+  }
+
+  function closeModal() {
+    detailModal.classList.remove('open');
+    currentModalItem = null;
+  }
+
+  function updateModalFavBtnState() {
+    if (!currentModalItem) return;
+    const isFav = favorites.includes(currentModalItem.id);
+    modalFavBtn.innerHTML = isFav 
+      ? '<i class="fa-solid fa-heart" style="color: var(--accent-red);"></i> Retirer des favoris' 
+      : '<i class="fa-regular fa-heart"></i> Ajouter aux favoris';
+  }
+
+  // Favorites Storage
+  function toggleFavorite(id) {
+    const idx = favorites.indexOf(id);
+    if (idx > -1) {
+      favorites.splice(idx, 1);
+    } else {
+      favorites.push(id);
+    }
+    localStorage.setItem('libertaire_favs', JSON.stringify(favorites));
+    updateFavCount();
+  }
+
+  function updateFavCount() {
+    favCount.textContent = favorites.length;
+  }
+
+  // CSV Export
+  function exportToCsv() {
+    if (filteredData.length === 0) return;
+
+    const headers = ['Organisation', 'Nom', 'Ville / Zone', 'Contact', 'Adresse', 'Type', 'Page PDF'];
+    const rows = filteredData.map(item => [
+      `"${item.organisation.replace(/"/g, '""')}"`,
+      `"${item.nom.replace(/"/g, '""')}"`,
+      `"${item.ville.replace(/"/g, '""')}"`,
+      `"${item.contact.replace(/"/g, '""')}"`,
+      `"${item.adresse.replace(/"/g, '""')}"`,
+      `"${item.type.replace(/"/g, '""')}"`,
+      `"${item.page}"`
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `repertoire_libertaire_cnt_ait_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Helper Utils
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+
+  function formatContactLink(contact) {
+    if (!contact || contact === '—') return '—';
+    if (contact.includes('@')) {
+      return `<a href="mailto:${escapeHtml(contact)}" style="color: var(--accent-red); text-decoration: none;">${escapeHtml(contact)}</a>`;
+    }
+    return `<a href="${contact.startsWith('http') ? escapeHtml(contact) : 'https://' + escapeHtml(contact)}" target="_blank" style="color: var(--accent-red); text-decoration: none;">${escapeHtml(contact)}</a>`;
+  }
+});
+
+</script>
+</body>
+</html>

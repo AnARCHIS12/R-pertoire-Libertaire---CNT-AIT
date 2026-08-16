@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  repertoire-libertaire:
+    build: .
+    container_name: repertoire_libertaire_cnt_ait
+    ports:
+      - "1936:80"
+    restart: unless-stopped

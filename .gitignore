@@ -1,0 +1,7 @@
+# Git Ignore Rules
+.DS_Store
+*.log
+*.tmp
+extracted_raw.txt
+extracted_layout.txt
+pdf_dump.xml
