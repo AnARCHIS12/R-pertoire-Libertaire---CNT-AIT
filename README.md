@@ -9,9 +9,11 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Responsive](https://img.shields.io/badge/Design-100%25_Responsive-991b1b?style=for-the-badge)
 
-Application web interactive répertoriant **l'intégralité des 111 sections, groupes, permanences, syndicats, locaux et librairies libertaires** 
+Application web interactive répertoriant **l'intégralité des 111 sections, groupes, permanences, syndicats, locaux et librairies libertaires**.
 
---- ## Présentation du Projet
+---
+
+## Présentation du Projet
 
 Ce projet transforme le document source PDF ([document_sections_groupes_libertaires_CNT_AIT.pdf](./document_sections_groupes_libertaires_CNT_AIT.pdf)) en une base de données interactive accessible via une interface web moderne, rapide et élégante aux couleurs de l'anarcho-syndicalisme (**Rouge et Noir**).
 
@@ -28,32 +30,36 @@ Ce projet transforme le document source PDF ([document_sections_groupes_libertai
   - **OCL** (Organisation Communiste Libertaire)
   - **Indépendants, Locaux & Collectifs** (France & Belgique)
 
---- ## Fonctionnalités Principales
+---
 
-- ** Carte Interactive Géolocalisée (Leaflet.js)** :
+## Fonctionnalités Principales
+
+- **Carte Interactive Géolocalisée (Leaflet.js)** :
   - Affichage simultané des **111 structures** sous forme de puces circulaires avec leurs **vrais logos officiels** (*CNT-AIT, FA, UCL, CNT-F, CNT-SO*).
-  - Suppression totale des chiffres de regroupement au profit d'un disposition en **spirale dorée** autour des villes denses (Paris, Toulouse, Marseille, Bruxelles, etc.).
+  - Suppression totale des chiffres de regroupement au profit d'une disposition en **spirale dorée** autour des villes denses (Paris, Toulouse, Marseille, Bruxelles, etc.).
   - Fonds de carte sombre haut contraste (*CartoDB Dark Matter*) sans mentions de bas de page parasites.
 
-- ** Recherche Globale & Filtres Multicritères** :
+- **Recherche Globale & Filtres Multicritères** :
   - Recherche en temps réel sur tous les champs (nom, organisation, ville, courriel, adresse, type).
   - Filtres déroulants par **Organisation**, **Type de structure** (*Groupe, Liaison, Section, Union locale, Local, Collectif, Librairie...*) et **Zone géographique** (*France / Belgique*).
   - **Puces de filtres rapides** arborant les véritables logos officiels.
 
-- ** 3 Modes d'Affichage** :
+- **3 Modes d'Affichage** :
   - **Grille de Cartes** : Visualisation responsive en blocs d'informations.
   - **Tableau Interactif** : Tableau triable par Nom, Organisation et Ville.
   - **Carte Plein Écran** : Exploration géographique interactive.
 
-- ** Favoris & Export Data** :
+- **Favoris & Export Data** :
   - Gestion des favoris enregistrés localement dans le navigateur (`localStorage`).
   - Exportation directe des données filtrées ou complètes au format **CSV**.
 
-- ** 100% Mobile & Responsive Design** :
+- **100% Mobile & Responsive Design** :
   - Optimisé pour smartphones, tablettes, portables et écrans ultra-larges.
   - Support complet des gestes tactiles (*touch scroll*, *pinch-to-zoom*).
 
---- ## Installation & Lancement
+---
+
+## Installation & Lancement
 
 ### Options de Lancement
 
@@ -84,7 +90,9 @@ docker-compose up -d
 ```
 Puis accédez à : **`http://localhost:1936`**
 
---- ## Structure du Projet
+---
+
+## Structure du Projet
 
 ```
 document_sections_groupes_libertaires_CNT_AIT/
@@ -102,5 +110,3 @@ document_sections_groupes_libertaires_CNT_AIT/
 ├── docker-compose.yml                         # Fichier Docker Compose
 └── README.md                                  # Documentation du projet
 ```
-
---- ## Crédits & Source
