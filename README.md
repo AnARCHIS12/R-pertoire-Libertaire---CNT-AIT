@@ -9,7 +9,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Responsive](https://img.shields.io/badge/Design-100%25_Responsive-991b1b?style=for-the-badge)
 
-Application web interactive répertoriant **l'intégralité des 111 sections, groupes, permanences, syndicats, locaux et librairies libertaires** à partir du document officiel diffusé par la **CNT-AIT**.
+Application web interactive répertoriant **l'intégralité des 111 sections, groupes, permanences, syndicats, locaux et librairies libertaires** 
 
 --- ## Présentation du Projet
 
@@ -104,4 +104,3 @@ document_sections_groupes_libertaires_CNT_AIT/
 ```
 
 --- ## Crédits & Source
-- **Source du document** : Document officiel diffusé par la **Confédération Anationale des Travailleurs - Association Internationale des Travailleurs (CNT-AIT)**.
