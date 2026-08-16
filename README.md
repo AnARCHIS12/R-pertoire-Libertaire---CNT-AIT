@@ -8,6 +8,7 @@
 ![Leaflet](https://img.shields.io/badge/Carte-Leaflet.js-199900?style=for-the-badge&logo=leaflet&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Responsive](https://img.shields.io/badge/Design-100%25_Responsive-991b1b?style=for-the-badge)
+![Netlify](https://img.shields.io/badge/Netlify-Ready-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 
 Application web interactive répertoriant **l'intégralité des 111 sections, groupes, permanences, syndicats, locaux et librairies libertaires**.
 
