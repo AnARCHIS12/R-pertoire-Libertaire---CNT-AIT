@@ -747,7 +747,7 @@ const LIBERTAIRE_DATA = [
     "id": 63,
     "page": 3,
     "organisation": "CNT-AIT",
-    "nom": "CNT-AIT national",
+    "nom": "CNT-AIT Anational",
     "ville": "Toulouse",
     "contact": "contact@cnt-ait.info",
     "adresse": "7 rue Saint-Rémésy, 31000 Toulouse",
