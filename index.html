@@ -2,6 +2,7 @@
 <html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; font-src 'self' data:; connect-src 'self' https://*.basemaps.cartocdn.com; object-src 'none'; base-uri 'self'; form-action 'self';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Répertoire Libertaire - CNT-AIT</title>
   <!-- Favicon -->
@@ -29,7 +30,7 @@
   <header class="app-header">
     <div class="header-container">
       <div class="brand">
-        <img src="cnt_ait_logo.png" alt="CNT-AIT Logo" class="brand-logo-img">
+        <img src="logo_anarchiste.svg" alt="Logo Anarchiste" class="brand-logo-img">
         <div class="brand-info">
           <h1>Répertoire <span class="highlight">Libertaire</span></h1>
           <p>Organisations, sections, groupes &amp; locaux libertaires</p>
@@ -68,7 +69,7 @@
           <i class="fa-solid fa-users"></i>
         </div>
         <div>
-          <div class="stat-val" id="statTotalCount">111</div>
+          <div class="stat-val" id="statTotalCount">118</div>
           <div class="stat-lbl">Groupes &amp; Structures</div>
         </div>
       </div>
@@ -98,7 +99,7 @@
           <i class="fa-solid fa-layer-group"></i>
         </div>
         <div>
-          <div class="stat-val" id="statFilteredCount">111</div>
+          <div class="stat-val" id="statFilteredCount">118</div>
           <div class="stat-lbl">Résultats Actuels</div>
         </div>
       </div>
@@ -187,6 +188,7 @@
         <button class="pill-btn" data-pill="cnt-f"><img src="logo_cnt.svg" class="org-logo-img" alt="CNT-F"> CNT-F Vignoles</button>
         <button class="pill-btn" data-pill="cnt-so"><img src="logo_cnt_so.jpg" class="org-logo-img" alt="CNT-SO"> CNT-SO</button>
         <button class="pill-btn" data-pill="oa"><svg class="org-logo-svg" viewBox="0 0 32 32" width="18" height="18" style="vertical-align: middle;"><circle cx="16" cy="16" r="13" fill="#18181c" stroke="#ef4444" stroke-width="1.5"/><text x="16" y="21" font-size="11" font-weight="900" text-anchor="middle" fill="#ef4444" font-family="Outfit, sans-serif">OA</text></svg> OA (Organisation Anarchiste)</button>
+        <button class="pill-btn" data-pill="ocl"><svg class="org-logo-svg" viewBox="0 0 32 32" width="18" height="18" style="vertical-align: middle;"><rect width="32" height="32" rx="6" fill="#18181c" stroke="#eab308" stroke-width="1.5"/><text x="16" y="21" font-size="10" font-weight="900" text-anchor="middle" fill="#eab308" font-family="Outfit, sans-serif">OCL</text></svg> OCL</button>
         <button class="pill-btn" data-pill="belgique"><i class="fa-solid fa-globe"></i> Belgique</button>
         <button class="pill-btn" data-pill="locaux"><i class="fa-solid fa-building-user"></i> Locaux &amp; Librairies</button>
         <button class="pill-btn" id="resetFiltersBtn"><i class="fa-solid fa-rotate-left"></i> Réinitialiser</button>
@@ -196,7 +198,7 @@
     <!-- Results Count Bar -->
     <div class="results-header">
       <div class="results-count">
-        Affichage de <strong id="visibleCount">111</strong> éléments sur <strong>111</strong>
+        Affichage de <strong id="visibleCount">118</strong> éléments sur <strong>118</strong>
       </div>
     </div>
 
@@ -1855,6 +1857,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activePill === 'cnt-f' && !item.organisation.includes('CNT-F')) return false;
         if (activePill === 'cnt-so' && !item.organisation.includes('CNT-SO')) return false;
         if (activePill === 'oa' && !item.organisation.includes('Organisation Anarchiste') && !item.organisation.includes('OA')) return false;
+        if (activePill === 'ocl' && !item.organisation.includes('OCL')) return false;
         if (activePill === 'belgique' && !isBelgian) return false;
         if (activePill === 'locaux' && !['Local', 'Librairie', 'Collectif'].includes(item.type)) return false;
       }
@@ -2029,7 +2032,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render Map View (Leaflet with MarkerCluster & Jitter to display ALL 111 sections)
+  // Render Map View (Leaflet with MarkerCluster & Jitter to display ALL 118 sections)
   function renderMapView() {
     if (!mapInstance) {
       mapInstance = L.map('map', { attributionControl: false }).setView([46.603354, 1.888334], 6);
@@ -2046,7 +2049,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     markerClusterGroup = L.featureGroup();
 
-    // Group items by coordinate to compute exact spiral fan-out so ALL 111 logos are visible simultaneously
+    // Group items by coordinate to compute exact spiral fan-out so ALL 118 logos are visible simultaneously
     const cityGroups = {};
     filteredData.forEach(item => {
       const key = `${item.lat.toFixed(3)}_${item.lng.toFixed(3)}`;

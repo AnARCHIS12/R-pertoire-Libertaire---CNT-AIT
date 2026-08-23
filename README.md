@@ -1,6 +1,6 @@
-# <img src="./cnt_ait_logo.png" width="50" height="50" style="vertical-align: middle; margin-right: 10px;"> Répertoire Libertaire - CNT-AIT
+# <img src="./logo_anarchiste.svg" width="50" height="50" style="vertical-align: middle; margin-right: 10px;"> Répertoire Libertaire
 
-![CNT-AIT](https://img.shields.io/badge/Organisation-CNT--AIT-dc2626?style=for-the-badge&logo=flag)
+![Anarchiste](https://img.shields.io/badge/Répertoire-Libertaire-dc2626?style=for-the-badge&logo=flag)
 ![Licence](https://img.shields.io/badge/Document-Libre-black?style=for-the-badge)
 ![HTML5](https://img.shields.io/badge/HTML5-Single--File-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-Rouge_&_Noir-1572B6?style=for-the-badge&logo=css3&logoColor=white)
@@ -10,7 +10,7 @@
 ![Responsive](https://img.shields.io/badge/Design-100%25_Responsive-991b1b?style=for-the-badge)
 ![Netlify](https://img.shields.io/badge/Netlify-Ready-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 
-Application web interactive répertoriant **l'intégralité des 111 sections, groupes, permanences, syndicats, locaux et librairies libertaires**.
+Application web interactive répertoriant **l'intégralité des 117 sections, groupes, permanences, syndicats, locaux et librairies libertaires**.
 
 ---
 
@@ -19,8 +19,8 @@ Application web interactive répertoriant **l'intégralité des 111 sections, gr
 Ce projet transforme le document source PDF ([document_sections_groupes_libertaires_CNT_AIT.pdf](./document_sections_groupes_libertaires_CNT_AIT.pdf)) en une base de données interactive accessible via une interface web moderne, rapide et élégante aux couleurs de l'anarcho-syndicalisme (**Rouge et Noir**).
 
 ### Statistiques de la Base de Données
-- **Total des structures répertoriées** : `111`
-- **Villes & Zones couvertes** : `74` (France & Belgique)
+- **Total des structures répertoriées** : `118`
+- **Villes & Zones couvertes** : `81` (France & Belgique)
 - **Organisations représentées** :
   - **CNT-AIT** (Confédération Anationale des Travailleurs - AIT)
   - **Fédération anarchiste (FA)**

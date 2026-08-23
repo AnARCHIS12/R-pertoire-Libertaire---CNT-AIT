@@ -735,10 +735,10 @@ const LIBERTAIRE_DATA = [
     "id": 62,
     "page": 3,
     "organisation": "OCL",
-    "nom": "Organisation communiste libertaire",
+    "nom": "OCL (siège)",
     "ville": "Reims",
-    "contact": "oclibertaire@hotmail.com",
-    "adresse": "OCL c/o Égrégore, BP 1213, 51058 Reims Cedex",
+    "contact": "oclibertaire@riseup.net",
+    "adresse": "c/o Égrégore, BP 81213, 51058 Reims Cedex",
     "type": "Organisation",
     "lat": 49.2583,
     "lng": 4.0317
@@ -1330,5 +1330,89 @@ const LIBERTAIRE_DATA = [
     "type": "Collectif",
     "lat": 50.8503,
     "lng": 4.3517
+  },
+  {
+    "id": 112,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Lille",
+    "ville": "Lille",
+    "contact": "—",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 50.6292,
+    "lng": 3.0573
+  },
+  {
+    "id": 113,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Boulogne-sur-Mer",
+    "ville": "Boulogne-sur-Mer",
+    "contact": "—",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 50.7264,
+    "lng": 1.6147
+  },
+  {
+    "id": 114,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Lyon",
+    "ville": "Lyon",
+    "contact": "ocl-lyon@laposte.net",
+    "adresse": "c/o La maison de l'écologie, 4 rue Bodin, 69001 Lyon",
+    "type": "Liaison",
+    "lat": 45.764,
+    "lng": 4.8357
+  },
+  {
+    "id": 115,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Mâcon",
+    "ville": "Mâcon",
+    "contact": "oclmacon@gmail.com",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 46.3069,
+    "lng": 4.8317
+  },
+  {
+    "id": 116,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Béarn / Mauléon",
+    "ville": "Mauléon (Pyrénées-Atlantiques)",
+    "contact": "ocl-eh@orange.fr",
+    "adresse": "Acratie, BP 23, 64130 Mauléon",
+    "type": "Groupe",
+    "lat": 43.2211,
+    "lng": -0.8831
+  },
+  {
+    "id": 117,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Loiret / Orléans",
+    "ville": "Orléans / Loiret",
+    "contact": "oclibertaire@hotmail.com",
+    "adresse": "—",
+    "type": "Liaison",
+    "lat": 47.903,
+    "lng": 1.9093
+  },
+  {
+    "id": 118,
+    "page": 3,
+    "organisation": "OCL",
+    "nom": "OCL Saint-Nazaire",
+    "ville": "Saint-Nazaire",
+    "contact": "oclibertaire@riseup.net",
+    "adresse": "—",
+    "type": "Groupe",
+    "lat": 47.2736,
+    "lng": -2.2136
   }
 ];

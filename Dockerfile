@@ -4,6 +4,7 @@ FROM nginx:alpine
 # Copy web application files into Nginx html directory
 COPY index.html /usr/share/nginx/html/index.html
 COPY styles.css /usr/share/nginx/html/styles.css
+COPY logo_anarchiste.svg /usr/share/nginx/html/logo_anarchiste.svg
 COPY cnt_ait_logo.png /usr/share/nginx/html/cnt_ait_logo.png
 COPY logo_fa.svg /usr/share/nginx/html/logo_fa.svg
 COPY logo_ucl.svg /usr/share/nginx/html/logo_ucl.svg
