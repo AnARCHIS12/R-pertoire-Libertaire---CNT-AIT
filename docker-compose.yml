@@ -5,6 +5,7 @@ services:
     image: liberchat/repertoire-libertaire:latest
     build: .
     container_name: repertoire_libertaire_cnt_ait
+    network_mode: host
     ports:
       - "1936:80"
     restart: unless-stopped
